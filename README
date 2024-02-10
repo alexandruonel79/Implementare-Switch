@@ -1,0 +1,42 @@
+Onel Alexandru 332CB
+
+    Am implementat toate cerintele.
+
+M am folosit de mai multe tipuri de structuri de date pentru implementare,
+variabila vlan_mac_table este o lista de dictionare, contine pentru fiecare
+vlan_id un dictionar caruia ii dai o adresa mac si iti da o interfata. Mai
+folosesc o lista trunk_ports in care salvez porturile care sunt de tipul
+trunk. Mai am un dictionar port_state, acesta este doar pentru porturile
+de tip trunk, si le salvez cu BLOCKED sau DESIGNATED. Primul pas a fost 
+sa iau pseudocodul din tema pentru procesul de invatare al switch ului si 
+l am modificat, adaugand variabilele mele. Mi am creat functia de verificare
+pentru unicast si m am folosit de variabilele nou create. Pentru partea de 
+VLAN, mi am mai facut o variabila, cameFromTrunk. Aceasta era true, daca 
+primeam vlan_id diferit de -1 din functia data de schelet. In acest caz 
+stiam ca am primit un pachet de pe o interfata trunk, asta urma sa afecteze
+in functie de urmatorul hop, deoarece daca am primit de pe o interfata 
+de tipul trunk, in functie de urmatorul hop voi scoate pachetul 802.1q sau 
+voi trimite cadrul, pastrand acel pachet intact. Aici am folosit vlan_mac_table,
+folosind vlan_id. Ulterior, am trecut la ultimul task, adica la STP, unde 
+initial am luat pseudocodul si mi am adaugat propriile variabile de care aveam
+nevoie. Le am initializat cu -1 pentru ca incepe acel thread si nu era ok
+sa intre cu valoarea nesetata de algoritm. Urmatorul pas a fost crearea unei 
+functii care sa imi genereze pachetul BDPU. Am avut mai multe incercari de 
+a face aceasta functie si am ramas la varianta in care adaug folosind to_bytes(2, byteorder='big')
+Pachetul este construit urmarind structura din articol. Am mai creat o functie 
+care extrage informatiile de care aveam nevoie, super simplu deoarece stiam 
+pozitiile si cati bytes au. Dupa ce mi am creat functiile auxiliare, am luat pseudocodul
+cel mai lung(pentru handle_BDPU_packet_received) si adaptat la variabilele mele, am 
+setat port_state pe BLOCKED si DESIGNATED. Nu am modificat logica pseudocodului.
+In main a trebuit sa verific daca pachetul primit este de tip BPDU, comparand adresa 
+mac dest cu cea standard pentru acest tip de pachet. Daca era pachet de tip BPDU
+se ocupa thread ul si dadeam continue pentru a primi urmatorul pachet. Dupa ce am 
+"terminat" codul am rulat si am observat ca daca dau ping host0 -> host5 am bucla la 
+switch uri. Asta a fost pentru ca uitasem sa pun conditia la porturile Trunk sa fie 
+deschise(port_state[vlan_mac_table[vlan_id][dest_mac]] != 'BLOCKED'). Ulterior
+pachetele se trimiteau conform si switch urile nu mai au nicio bucla. Am mai lasat
+comentarii prin cod pentru o mai buna intelegere.
+
+Feedback: 
+        O tema interesanta, putin mai usoara decat cea la PCOM, routerul, dar a 
+fost mai greu cu python ul pentru ca nu stiam sa il folosesc.
